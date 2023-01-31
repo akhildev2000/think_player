@@ -9,7 +9,7 @@ import 'package:think_player/widgets/reset_app.dart';
 import 'package:think_player/widgets/setting_sec.dart';
 //import 'package:path_provider/path_provider.dart';
 
-import '../widgets/change_theme.dart';
+import '../../widgets/change_theme.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -98,7 +98,7 @@ class _SettingsState extends State<Settings> {
                 trailing: const ChangeThemeButton(),
               ),
             ),
-            //buildSwitch(value)
+            // buildSwitch(value)
           ],
         ),
       ),

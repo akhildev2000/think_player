@@ -6,7 +6,7 @@ var sort = [
   'Name (z to a)',
 ];
 
-class SortFunctions {
+class SortFunctions extends DbFunction {
   List<VideoModel> sortAtoZ(List<VideoModel> list) {
     videoListNotifer;
     List<VideoModel> tempList = list;

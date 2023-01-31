@@ -6,13 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:think_player/sections/database/db_playlistfun.dart';
 import 'package:think_player/sections/database/dbfav.dart';
 import 'package:think_player/sections/database/dbfav_fun.dart';
-import 'package:think_player/sections/inside_playlist.dart';
+import 'package:think_player/sections/functions/inside_playlist.dart';
 import 'package:think_player/widgets/change_playname.dart';
 import 'package:think_player/widgets/create_playlist.dart';
-import 'package:think_player/sections/favourites.dart';
+import 'package:think_player/sections/screens/favourites.dart';
 
 class PlayList extends StatefulWidget {
   const PlayList({super.key});

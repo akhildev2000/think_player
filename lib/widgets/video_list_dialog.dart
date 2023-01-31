@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:think_player/sections/database/db_playlistfun.dart';
 
 import '../sections/database/dbfav.dart';
@@ -36,15 +37,13 @@ videoListDialog(context, videoList, playlistIndex) {
                 ),
                 SizedBox(
                   height: 270,
-                  child: ValueListenableBuilder(
-                    valueListenable: videoListNotifer,
-                    builder: (BuildContext context, List<VideoModel> value,
-                        Widget? child) {
+                  child: Consumer<DbFunction>(
+                    builder: (context, value, Widget? child) {
                       return SizedBox(
                         height: 270,
                         child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount: value.length,
+                          itemCount: value.videoListNotifer.length,
                           itemBuilder: (BuildContext context, int index) {
                             return Padding(
                               padding: const EdgeInsets.only(left: 8, right: 8),
@@ -65,19 +64,21 @@ videoListDialog(context, videoList, playlistIndex) {
                                     child: Image.asset('asset/videoplay.jpg'),
                                   ),
                                   title: Text(
-                                    value[index].name,
+                                    value.videoListNotifer[index].name,
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.poppins(
                                         fontWeight: FontWeight.w500),
                                   ),
                                   onTap: () {
                                     if (!PlayDb().contentPlayCheck(
-                                        value[index].path, playlistIndex)) {
+                                        value.videoListNotifer[index].path,
+                                        playlistIndex)) {
                                       final tempPlaylistName = playListNotifier
                                           .value[playlistIndex].name;
                                       final temp = playListNotifier
                                           .value[playlistIndex].path;
-                                      temp.add(value[index].path);
+                                      temp.add(
+                                          value.videoListNotifer[index].path);
                                       PlayDb().addPlay2(tempPlaylistName, temp);
                                       // snack(
                                       //     '${value[index].name} Added..!!',

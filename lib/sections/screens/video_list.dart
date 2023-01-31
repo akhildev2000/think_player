@@ -1,20 +1,20 @@
-import 'dart:io';
-import 'package:fetch_all_videos/fetch_all_videos.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:think_player/main.dart';
 import 'package:think_player/sections/database/dbfav.dart';
 import 'package:think_player/sections/database/dbfav_fun.dart';
-import 'package:think_player/sections/favourites.dart';
-import 'package:think_player/sections/search.dart';
+import 'package:think_player/sections/functions/getvideos.dart';
 
-import 'package:think_player/sections/video_screen.dart';
+import 'package:think_player/sections/screens/favourites.dart';
+import 'package:think_player/sections/functions/search.dart';
+
+import 'package:think_player/sections/functions/video_screen.dart';
 import 'package:think_player/widgets/select_palylist.dart';
 import 'package:think_player/widgets/sortfun.dart';
-import 'package:video_player/video_player.dart';
 
-import '../widgets/create_playlist.dart';
+import '../../widgets/create_playlist.dart';
 
 List<String> searchItem = [];
 List<VideoModel> sortedList = [];
@@ -34,14 +34,17 @@ class _VideoListState extends State<VideoList> {
   List videos = [];
   @override
   void initState() {
-    getVideos();
+    Provider.of<GetVideos>(context, listen: false).getVideos(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     setState(() {});
-    videoListNotifer.value.toSet().toList();
+    Provider.of<DbFunction>(context, listen: false)
+        .videoListNotifer
+        .toSet()
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -108,44 +111,43 @@ class _VideoListState extends State<VideoList> {
         ],
       ),
       //backgroundColor: const Color.fromARGB(255, 3, 31, 71),
-      body: ValueListenableBuilder(
-          valueListenable: videoListNotifer,
-          builder: (BuildContext context, List<VideoModel> videoList,
-              Widget? child) {
-            if (sortOrder == 'Name (a to z)') {
-              sortedList = SortFunctions().sortAtoZ(videoList);
-            } else if (sortOrder == 'Name (z to a)') {
-              sortedList = SortFunctions().sortZtoA(videoList);
-            } else {
-              sortedList = videoList;
-            }
-            return videoList.isEmpty
-                ? Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 120, left: 75),
-                        child: Lottie.asset('asset/loading_home.json',
-                            height: 250),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 65),
-                        child: Text('Fetching Videos',
-                            style: GoogleFonts.merriweatherSans(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                                fontSize: 25)),
-                      )
-                    ],
+      body: Consumer<DbFunction>(builder: (context, videoList, Widget? child) {
+        if (sortOrder == 'Name (a to z)') {
+          sortedList = SortFunctions().sortAtoZ(videoList.videoListNotifer);
+        } else if (sortOrder == 'Name (z to a)') {
+          sortedList = SortFunctions().sortZtoA(videoList.videoListNotifer);
+        } else {
+          sortedList = videoList.videoListNotifer;
+        }
+        return videoList.videoListNotifer.isEmpty
+            ? Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 120, left: 75),
+                    child: Lottie.asset('asset/loading_home.json', height: 250),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 65),
+                    child: Text('Fetching Videos',
+                        style: GoogleFonts.merriweatherSans(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                            fontSize: 25)),
                   )
-                : ListView.builder(
+                ],
+              )
+            : Consumer<DbFunction>(
+                builder: (context, videoList, child) {
+                  return ListView.builder(
                     itemBuilder: ((context, index) {
                       if (searchItem.length <= index) {
-                        searchItem.add(videoList[index].path);
+                        searchItem.add(videoList.videoListNotifer[index].path);
                       } else {
-                        searchItem[index] = videoList[index].path;
+                        searchItem[index] =
+                            videoList.videoListNotifer[index].path;
                       }
-                      bool check =
-                          DbFunction().contentCheck(videoList[index].path);
+                      bool check = videoList
+                          .contentCheck(videoList.videoListNotifer[index].path);
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
@@ -159,17 +161,23 @@ class _VideoListState extends State<VideoList> {
                           ),
                           trailing: IconButton(
                             onPressed: (() async {
-                              bool check = DbFunction()
-                                  .contentCheck(videoList[index].path);
-                              if (videoList[index].isFav != true && !check) {
-                                videoList[index].isFav = true;
+                              bool check = videoList.contentCheck(
+                                  videoList.videoListNotifer[index].path);
+                              if (videoList.videoListNotifer[index].isFav !=
+                                      true &&
+                                  !check) {
+                                videoList.videoListNotifer[index].isFav = true;
                                 setState(() {});
                                 final favDetails = VideoModel(
-                                    path: videoList[index].path,
-                                    name: videoList[index].path.split('/').last,
-                                    file: videoList[index].file.toString(),
-                                    id: videoList[index].id);
-                                DbFunction().addFav(favDetails);
+                                    path:
+                                        videoList.videoListNotifer[index].path,
+                                    name: videoList.videoListNotifer[index].path
+                                        .split('/')
+                                        .last,
+                                    file: videoList.videoListNotifer[index].file
+                                        .toString(),
+                                    id: videoList.videoListNotifer[index].id);
+                                videoList.addFav(favDetails);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     duration: Duration(milliseconds: 120),
@@ -178,11 +186,12 @@ class _VideoListState extends State<VideoList> {
                                 );
                                 setState(() {});
                               } else {
-                                int? tempindex = DbFunction()
-                                    .removeIndex(videoList[index].path);
+                                int? tempindex = videoList.removeIndex(
+                                    videoList.videoListNotifer[index].path);
                                 if (tempindex != null) {
-                                  videoList[index].isFav = false;
-                                  DbFunction().removeFav(tempindex);
+                                  videoList.videoListNotifer[index].isFav =
+                                      false;
+                                  videoList.removeFav(tempindex);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       duration: Duration(milliseconds: 120),
@@ -204,7 +213,7 @@ class _VideoListState extends State<VideoList> {
                                 topLeft: Radius.circular(25),
                                 bottomRight: Radius.circular(25)),
                           ),
-                          title: Text(sortedList[index].name,
+                          title: Text(videoList.videoListNotifer[index].name,
                               maxLines: 1,
                               style: GoogleFonts.merriweatherSans(
                                   fontWeight: FontWeight.w500)),
@@ -215,21 +224,24 @@ class _VideoListState extends State<VideoList> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => VideoItems(
-                                  contentFiles: videoList,
+                                  contentFiles: videoList.videoListNotifer,
                                   index: index,
                                 ),
                               ),
                             );
                           },
                           onLongPress: () {
-                            listofplaylist(index, context, videoList);
+                            listofplaylist(
+                                index, context, videoList.videoListNotifer);
                           },
                         ),
                       );
                     }),
-                    itemCount: videoList.length,
+                    itemCount: videoList.videoListNotifer.length,
                   );
-          }),
+                },
+              );
+      }),
     );
   }
 }

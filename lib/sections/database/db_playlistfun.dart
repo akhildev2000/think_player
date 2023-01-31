@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:think_player/main.dart';
 import 'package:think_player/sections/database/dbfav.dart';
 
@@ -7,6 +8,7 @@ import 'dbfav_fun.dart';
 ValueNotifier<List<Palylistmodel>> playListNotifier = ValueNotifier([]);
 
 class PlayDb {
+  DbFunction favObj = DbFunction();
   Future<void> addPlay(Palylistmodel value, currentname) async {
     final videoDB = await myhivebox2('playlist');
     bool notFound = false;
@@ -48,8 +50,8 @@ class PlayDb {
 
   bool contentCheck(path) {
     bool result = false;
-    for (int i = 0; i < favListNotifier.value.length; i++) {
-      if (favListNotifier.value[i].path == path) {
+    for (int i = 0; i < favObj.favListNotifier.length; i++) {
+      if (favObj.favListNotifier[i].path == path) {
         result = true;
       }
       if (result == true) {

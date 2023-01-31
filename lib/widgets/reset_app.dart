@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:think_player/sections/splash_screen.dart';
+import 'package:think_player/sections/functions/splash_screen.dart';
 
 import '../sections/database/dbfav_fun.dart';
 

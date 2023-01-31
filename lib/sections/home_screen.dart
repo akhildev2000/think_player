@@ -1,13 +1,14 @@
 // ignore_for_file: implementation_imports
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:think_player/sections/database/db_playlistfun.dart';
 import 'package:think_player/sections/database/dbfav_fun.dart';
 //import 'package:flutter/src/widgets/container.dart';
-import 'package:think_player/sections/favourites.dart';
-import 'package:think_player/sections/playlist.dart';
-import 'package:think_player/sections/settings.dart';
-import 'package:think_player/sections/video_list.dart';
+import 'package:think_player/sections/screens/favourites.dart';
+import 'package:think_player/sections/screens/playlist.dart';
+import 'package:think_player/sections/screens/settings.dart';
+import 'package:think_player/sections/screens/video_list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,9 +21,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    //favListNotifier.notifyListeners();
+    // Provider.of<DbFunction>(context, listen: false).notifyListeners();
+    // playListNotifier.notifyListeners();
+    Provider.of<DbFunction>(context, listen: false).getAllVideos();
     playListNotifier.notifyListeners();
-    DbFunction().getAllVideos();
     super.initState();
   }
 
@@ -58,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: (index) => setState(
             () {
               this.index = index;
-              favListNotifier.notifyListeners();
+              Provider.of<DbFunction>(context, listen: false).notifyListeners();
               DbFunction().getAllVideos();
               playListNotifier.notifyListeners();
             },

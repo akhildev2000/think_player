@@ -7,14 +7,15 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:think_player/sections/database/db_playlistfun.dart';
 import 'package:think_player/sections/database/dbfav_fun.dart';
-import 'package:think_player/sections/video_screen.dart';
-import 'package:think_player/sections/videoplayer2.dart';
+import 'package:think_player/sections/functions/video_screen.dart';
+import 'package:think_player/sections/functions/videoplayer2.dart';
 import 'package:think_player/widgets/video_list_dialog.dart';
 import 'package:video_player/video_player.dart';
 
-import '../widgets/change_playname.dart';
+import '../../widgets/change_playname.dart';
 
 class InsidePlaylist extends StatefulWidget {
   final templist;
@@ -53,7 +54,10 @@ class _InsidePlaylistState extends State<InsidePlaylist> {
             IconButton(
               onPressed: () {
                 videoListDialog(
-                    context, videoListNotifer.value, widget.playlistIndex);
+                    context,
+                    Provider.of<DbFunction>(context, listen: false)
+                        .videoListNotifer,
+                    widget.playlistIndex);
               },
               icon: const Icon(Icons.add_box),
             ),

@@ -5,9 +5,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:think_player/sections/video_list.dart';
-import 'package:think_player/sections/video_screen.dart';
-import 'package:think_player/sections/videoplayer2.dart';
+import 'package:think_player/sections/screens/video_list.dart';
+import 'package:think_player/sections/functions/video_screen.dart';
+import 'package:think_player/sections/functions/videoplayer2.dart';
 import 'package:video_player/video_player.dart';
 
 class SearchScreen extends SearchDelegate {
